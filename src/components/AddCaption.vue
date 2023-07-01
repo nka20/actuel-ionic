@@ -63,7 +63,7 @@ IonInput,
     },
     ajouterCaption(){
         let p = {
-            date:this.date,
+            date:this.date, 
             caption:this.caption
         }
        return modalController.dismiss(p, "addCaptionEmited")
