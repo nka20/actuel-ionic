@@ -72,10 +72,13 @@ IonInput,
          const image = await Camera.getPhoto({
             quality: 90,
             allowEditing: true,
+            correctOrientation:true,
             resultType: CameraResultType.Uri,
             source:CameraSource.Prompt,
+          }).catch((e)=>{
+            console.log("error: ",e)
           });
-        console.log(image)
+          console.log(image)
     }
    }
 }
