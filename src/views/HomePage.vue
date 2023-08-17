@@ -1,136 +1,110 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true" >
-      <ion-toolbar color="primary">
-        <ion-title>Liste Employées</ion-title>
-        <ion-icon :icon="person" size="large" slot="end"></ion-icon>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>
+          Accueil
+        </ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content :fullscreen="true" class="ion-padding">
-      <ion-list>
-        <ion-item v-for="i in 20" :key="i" >
-          <ion-avatar @click="openPhoto" slot="start" ><img src="../asset/logo.jpg"></ion-avatar>
-          <ion-label>
-            <h2>Employe num : {{i}}</h2>
-            <p>Bonjour</p>
-          </ion-label>
-          <ion-button @click="ajouterConge" slot="end" color="primary">
-            <ion-icon :icon="add"></ion-icon>
-          Congé</ion-button>
-          <ion-button @click="modifierEmploye" slot="end" color="warning">
-            <ion-icon :icon="add"></ion-icon>
-          Modifier</ion-button>
-        </ion-item>
-      </ion-list>
+
+    <ion-content>
+      <div class="container">
+        <h1>Bienvenue sur notre application de vente!</h1>
+        
+        <!-- Conteneur avec mise en page flex -->
+        <div class="lists-container">
+          <!-- Liste des produits -->
+          <div class="list-container">
+            <div class="list-title">Liste des produits</div>
+            <div class="list">
+              <div class="list-item" v-for="(product, index) in products" :key="index">
+                <p>Id: {{ product.id }}</p>
+                <p>Nom du produit: {{ product.nom }}</p>
+                <p>Prix unitaire: {{ product.prixUnitaire }}</p>
+                <p>Utilisateur: {{ product.utilisateur }}</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Ligne verticale de séparation -->
+          <div class="vertical-line"></div>
+          
+          <!-- Liste des ventes -->
+          <div class="list-container">
+            <div class="list-title">Liste des ventes</div>
+            <div class="list">
+              <div class="list-item" v-for="(sale, index) in sales" :key="index">
+                <p>Id: {{ sale.id }}</p>
+                <p>Nom du produit: {{ sale.nomProduit }}</p>
+                <p>Quantité: {{ sale.quantite }}</p>
+                <p>Prix total: {{ sale.prixTotal }}</p>
+                <p>Prix unitaire: {{ sale.prixUnitaire }}</p>
+                <p>Utilisateur: {{ sale.utilisateur }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Boutons de navigation -->
+        <ion-button expand="full" routerLink="/produit">Produit</ion-button>
+        <ion-button expand="full" routerLink="/vente">Vente</ion-button>
+      </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script>
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonIcon,
-  IonList,
-  IonItem,
-  IonAvatar,
-  IonLabel,
-  IonButton,
-  modalController,
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton } from '@ionic/vue';
 
-} from '@ionic/vue';
-
-import {person, add} from "ionicons/icons"
-import AddCongeModal from "../components/AddCongeModal.vue"
-import DetailsPhoto from "../components/DetailsPhoto.vue"
-import ModifierEmploye from "../components/ModifierEmploye.vue"
-export default{
-  data(){
+export default {
+  components: {
+    IonContent,
+    IonHeader,
+    IonPage,
+    IonTitle,
+    IonToolbar,
+    IonButton
+  },
+  data() {
     return {
-      person,
-      add,
-    }
-  },
-  components:{
-    IonContent,IonHeader,IonIcon,IonButton,
-    IonPage, IonTitle, IonToolbar,
-    IonList,IonItem, IonAvatar,IonLabel
-  },
-  methods:{
-    async ajouterConge() {
-        const modal = await modalController.create({
-          component: AddCongeModal,
-        });
-        modal.present();
-
-        const { data, role } = await modal.onWillDismiss();
-
-        if (role === 'confirm') {
-          this.message = `Hello, ${data}!`;
-        }
-    },
-    async modifierEmploye() {
-        const modal = await modalController.create({
-          component: ModifierEmploye,
-          componentProps:{employe:{nom:"ArtcalO", prenom:"TLW", age:20}}
-        });
-        modal.present();
-
-        const { data, role } = await modal.onWillDismiss();
-
-        if (role === 'confirm') {
-          this.message = `Hello, ${data}!`;
-        }
-    },
-    async openPhoto() {
-        const modal = await modalController.create({
-          component: DetailsPhoto,
-          componentProps:{photo:"https://th.bing.com/th/id/OIP.K-BFJdfUE__-t_MSfFKs5gHaIH?w=183&h=201&c=7&r=0&o=5&dpr=1.5&pid=1.7"},
-          //componentProps:{photo:"/assets/logo.jpg"},
-          backdropDismiss:false,
-          animated:true,
-        });
-        modal.present();
-
-        const { data, role } = await modal.onWillDismiss();
-
-        if (role === 'confirm') {
-          this.message = `Hello, ${data}!`;
-        }
-    },
+      products: [], // Remplacez cela par vos données réelles de produits
+      sales: [] // Remplacez cela par vos données réelles de ventes
+    };
   }
 }
 </script>
 
 <style scoped>
-#container {
-  text-align: center;
-  
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+/* Vos styles CSS */
+.lists-container {
+  display: flex;
+  justify-content: space-between;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+.list-container {
+  flex: 1;
+  padding: 20px;
+  border: 1px solid #ccc;
+  margin: 10px;
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-  
-  color: #8c8c8c;
-  
-  margin: 0;
+.list-title {
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
-#container a {
-  text-decoration: none;
+.list {
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
+}
+
+.list-item {
+  margin-bottom: 15px;
+}
+
+.vertical-line {
+  border-left: 1px solid #ccc;
+  height: 100%;
 }
 </style>
