@@ -5,6 +5,7 @@
         <ion-title>
           Accueil
         </ion-title>
+        <ion-button slot="end" color="danger" @click="logout">logout</ion-button>
       </ion-toolbar>
     </ion-header>
 
@@ -18,10 +19,10 @@
           <div class="list-container">
             <div class="list-title">Liste des produits</div>
             <div class="list">
-              <div class="list-item" v-for="(product, index) in products" :key="index">
+              <div class="list-item" v-for="product in products" :key="product">
                 <p>Id: {{ product.id }}</p>
-                <p>Nom du produit: {{ product.nom }}</p>
-                <p>Prix unitaire: {{ product.prixUnitaire }}</p>
+                <p>Nom du produit: {{  product.nom }}</p>
+                <p>Prix unitaire: {{ prix_unitaire }}</p>
                 <p>Utilisateur: {{ product.utilisateur }}</p>
               </div>
             </div>
@@ -56,7 +57,7 @@
 
 <script>
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton } from '@ionic/vue';
-
+import axios from 'axios';
 export default {
   components: {
     IonContent,
@@ -67,10 +68,24 @@ export default {
     IonButton
   },
   data() {
+    axios.get("http://127.0.0.1:8000/vente/")
+     .then((response)=>{
+      this.products=response.data.results
+    }),
+    axios.get("http://127.0.0.1:8000/produit/")
+     .then((response)=>{
+      this.sales=response.data.results
+    })
     return {
-      products: [], // Remplacez cela par vos données réelles de produits
-      sales: [] // Remplacez cela par vos données réelles de ventes
+      products:'',// Remplacez cela par vos données réelles de produits
+      sales: '' // Remplacez cela par vos données réelles de ventes
     };
+  },
+  methods: {
+    logout(){
+      localStorage.removeItem("tokens"),
+     this.$store.state.tokens=null
+    },
   }
 }
 </script>
