@@ -57,35 +57,31 @@ export default {
 
   },
   data(){
-    return{
-ibije:"nta na kimwe",
-username:"",
-password:"",
+    return {
+      ibije:"nta na kimwe",
+      username:"",
+      password:"",
     }
   },
   methods: {
     Login(){
       let data={
-        username: this.username,
-        password:this.password
+        'username': this.username,
+        'password':this.password
       }
-     //this.$store.state.connected=true;
-     axios.post("http://127.0.0.1:8000/login/",data)
-     .then((response)=>{
-      this.ibije=response.data
-      //this.$store.state.connected=true;
-     }).catch((error) => {
-          console.log("Error:", error);
-          console.log(this.response)
-
-        }); 
-
-},
-mounted() {
-    this.login = true;
+      axios.post("http://127.0.0.1:8000/login/",data)
+      .then((response)=>{
+        this.$store.state.tokens = response.data
+        localStorage.setItem("tokens", JSON.stringify(response.data))
+      }).catch((error) => {
+        console.log("Error:", error);
+      }); 
+    }
   },
+  mounted(){
+
   }
-  }
+}
 </script>
 
 <style scoped>

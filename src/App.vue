@@ -1,7 +1,7 @@
 <template>
   <ion-app>
-    <ion-router-outlet v-if="$store.state.connected"></ion-router-outlet>
-      <Log v-if="!$store.state.connected"> </Log>
+    <ion-router-outlet v-if="$store.state.tokens!=null"></ion-router-outlet>
+    <Log v-else> </Log>
   </ion-app>
 </template>
 
@@ -16,6 +16,9 @@ export default defineComponent({
     IonApp,
     IonRouterOutlet,
     Log
+  },
+  mounted(){
+    this.$store.state.tokens = JSON.parse(localStorage.getItem("tokens"))
   }
 });
 </script>
