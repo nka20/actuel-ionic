@@ -73,7 +73,7 @@ password:"",
      axios.post("http://127.0.0.1:8000/login/",data)
      .then((response)=>{
       this.ibije=response.data
-      this.$store.state.connected=true;
+      //this.$store.state.connected=true;
      }).catch((error) => {
           console.log("Error:", error);
           console.log(this.response)
