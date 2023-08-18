@@ -5,6 +5,7 @@
           <ion-title>
             Vente
           </ion-title>
+          <ion-button slot="end" color="danger" @click="logout">logout</ion-button>
         </ion-toolbar>
       </ion-header>
       
@@ -31,7 +32,7 @@
               <p>Prix total: {{ sale.prixTotal }}</p>
               <p>Prix unitaire: {{ sale.prixUnitaire }}</p>
               <p>Utilisateur: {{ sale.utilisateur }}</p>
-              <div class="vertical-line"></div>
+              <div class="horizontal-line"></div>
               </div>
           </div>
         </div>
@@ -83,12 +84,16 @@ import {
       this.ibije=response.data.results
      })
 },
-  }
+  },
+  logout(){
+      localStorage.removeItem("tokens"),
+     this.$store.state.tokens=null
+    },
 }
   </script>
   
   <style scoped>
-  .vertical-line {
+  .horizontal-line {
     border-bottom: 1px solid #ccc;
     height: 100%;
   }

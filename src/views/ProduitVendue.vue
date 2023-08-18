@@ -5,6 +5,7 @@
       <ion-title>
         Produit
       </ion-title>
+      <ion-button slot="end" color="danger" @click="logout">logout</ion-button>
     </ion-toolbar>
   </ion-header>
   
@@ -31,7 +32,7 @@
             <p>Nom du produit: {{product.nom}}</p>
             <p>Prix unitaire: {{product.prix_unitaire}}</p>
             <p>Utilisateur: {{product.utilisateur}}</p>
-            <div class="vertical-line"></div>
+            <div class="horizontal-line"></div>
           </div>
 
         </div>
@@ -69,6 +70,10 @@ export default {
 
   },
   data(){
+    axios.get("http://127.0.0.1:8000/vente/")
+     .then((response)=>{
+      this.ibije=response.data.results
+     })
     return{
       ibije:"",
     };
@@ -81,12 +86,16 @@ export default {
      })
 
 },
-  }
+  },
+  logout(){
+      localStorage.removeItem("tokens"),
+     this.$store.state.tokens=null
+    },
 }
 </script>
 
 <style scoped>
-.vertical-line {
+.horizontal-line {
   border-bottom: 1px solid #ccc;
   height: 100%;
 }

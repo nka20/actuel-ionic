@@ -24,6 +24,7 @@
                 <p>Nom du produit: {{  product.nom }}</p>
                 <p>Prix unitaire: {{ prix_unitaire }}</p>
                 <p>Utilisateur: {{ product.utilisateur }}</p>
+                <div class="horizontal-line"></div>
               </div>
             </div>
           </div>
@@ -42,6 +43,7 @@
                 <p>Prix total: {{ sale.prixTotal }}</p>
                 <p>Prix unitaire: {{ sale.prixUnitaire }}</p>
                 <p>Utilisateur: {{ sale.utilisateur }}</p>
+                <div class="horizontal-line"></div>
               </div>
             </div>
           </div>
@@ -120,6 +122,10 @@ export default {
 
 .vertical-line {
   border-left: 1px solid #ccc;
+  height: 100%;
+}
+.horizontal-line {
+  border-bottom: 1px solid #ccc;
   height: 100%;
 }
 </style>
