@@ -76,6 +76,18 @@ export default {
       }).catch((error) => {
         console.log("Error:", error);
       }); 
+
+      axios.get("http://127.0.0.1:8000/produit/")
+     .then((response)=>{
+      this.$store.state.produit=response
+      localStorage.setItem("produit", JSON.stringify(response.data))
+    });
+
+    axios.get("http://127.0.0.1:8000/vente/")
+     .then((response)=>{
+      this.$store.state.vente=response
+      localStorage.setItem("vente", JSON.stringify(response.data))
+    });
     }
   },
   mounted(){

@@ -22,7 +22,7 @@
               <div class="list-item" v-for="product in products" :key="product">
                 <p>Id: {{ product.id }}</p>
                 <p>Nom du produit: {{  product.nom }}</p>
-                <p>Prix unitaire: {{ prix_unitaire }}</p>
+                <p>Prix unitaire: {{ product.prix_unitaire }}</p>
                 <p>Utilisateur: {{ product.utilisateur }}</p>
                 <div class="horizontal-line"></div>
               </div>
@@ -38,10 +38,10 @@
             <div class="list">
               <div class="list-item" v-for="(sale, index) in sales" :key="index">
                 <p>Id: {{ sale.id }}</p>
-                <p>Nom du produit: {{ sale.nomProduit }}</p>
+                <p>Nom du produit: {{ sale.nom }}</p>
                 <p>Quantité: {{ sale.quantite }}</p>
-                <p>Prix total: {{ sale.prixTotal }}</p>
-                <p>Prix unitaire: {{ sale.prixUnitaire }}</p>
+                <p>Prix total: {{ sale.prix_total }}</p>
+                <p>Prix unitaire: {{ sale.prix_unitaire }}</p>
                 <p>Utilisateur: {{ sale.utilisateur }}</p>
                 <div class="horizontal-line"></div>
               </div>
@@ -59,7 +59,6 @@
 
 <script>
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton } from '@ionic/vue';
-import axios from 'axios';
 export default {
   components: {
     IonContent,
@@ -70,23 +69,19 @@ export default {
     IonButton
   },
   data() {
-    axios.get("http://127.0.0.1:8000/vente/")
-     .then((response)=>{
-      this.products=response.data.results
-    }),
-    axios.get("http://127.0.0.1:8000/produit/")
-     .then((response)=>{
-      this.sales=response.data.results
-    })
     return {
-      products:'',// Remplacez cela par vos données réelles de produits
-      sales: '' // Remplacez cela par vos données réelles de ventes
+      products:this.$store.state.produit.results,// Remplacez cela par vos données réelles de produits
+      sales: this.$store.state.vente.results // Remplacez cela par vos données réelles de ventes
     };
   },
   methods: {
     logout(){
       localStorage.removeItem("tokens"),
+      localStorage.removeItem("produit"),
+      localStorage.removeItem ("vente"),
      this.$store.state.tokens=null
+     this.$store.state.produit=null
+     this.$store.state.vente=null
     },
   }
 }

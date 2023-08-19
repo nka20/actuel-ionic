@@ -19,6 +19,8 @@ export default defineComponent({
   },
   mounted(){
     this.$store.state.tokens = JSON.parse(localStorage.getItem("tokens"))
+    this.$store.state.produit = JSON.parse(localStorage.getItem("produit"))
+    this.$store.state.vente = JSON.parse(localStorage.getItem("vente"))
   }
 });
 </script>
