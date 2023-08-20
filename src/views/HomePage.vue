@@ -63,8 +63,8 @@
 </template>
 
 <script>
-//import produit from "./ProduitVendue.vue";
-//import vente from "./VenteVendue.vue";
+//import produit from "../components/ProduitVendue.vue";
+//import vente from "../components/VenteVendue.vue";
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton } from '@ionic/vue';
 export default {
   components: {
