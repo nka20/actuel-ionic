@@ -8,7 +8,7 @@
 <script>
 import { IonApp, IonRouterOutlet } from '@ionic/vue';
 import { defineComponent } from 'vue';
-import Log from "../src/views/LoginPage.vue";
+import Log from "./components/LoginPage.vue";
 
 export default defineComponent({
   name:'app',

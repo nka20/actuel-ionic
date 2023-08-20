@@ -50,17 +50,26 @@
         </div>
         
         <!-- Boutons de navigation -->
-        <ion-button expand="full" routerLink="/produit">Produit</ion-button>
-        <ion-button expand="full" routerLink="/vente">Vente</ion-button>
+        <ion-button expand="full" router-Link="/produit">Produit</ion-button>
+        <ion-button expand="full" router-Link="/vente">Vente</ion-button>
+     <!--  <ion-button expand="full" @click="modal_produit=true">Produit</ion-button>
+        <ion-button expand="full" @click="modal_vente=true">Vente</ion-button> --> 
       </div>
     </ion-content>
+    <!--
+    <vente v-if="modal_vente != false"/>
+    <produit v-if="modal_produit != false"/>  --> 
   </ion-page>
 </template>
 
 <script>
+//import produit from "./ProduitVendue.vue";
+//import vente from "./VenteVendue.vue";
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton } from '@ionic/vue';
 export default {
   components: {
+   // vente,
+    //produit,
     IonContent,
     IonHeader,
     IonPage,
@@ -70,6 +79,8 @@ export default {
   },
   data() {
     return {
+      //modal_vente:false ,
+      //modal_produit:false ,
       products:this.$store.state.produit.results,// Remplacez cela par vos données réelles de produits
       sales: this.$store.state.vente.results // Remplacez cela par vos données réelles de ventes
     };
