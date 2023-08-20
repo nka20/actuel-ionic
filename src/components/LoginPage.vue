@@ -19,10 +19,10 @@
         <ion-label>Mot de passe</ion-label>
         <ion-input aria-label="password" type="password" v-model="password">Password</ion-input>
       </ion-item>
-      <ion-button expand="full" @click="Login">Produit</ion-button>
+      <ion-button expand="full" @click="Login" >connexion</ion-button>
     </ion-col>
-    <div class="list-item" v-for="product in ibije" :key="product">
-      <p>{{product}}</p>
+    <div class="list-item">
+      <p>{{ibije}}</p>
       </div>
   </ion-content>
 </ion-page>
@@ -58,7 +58,7 @@ export default {
   },
   data(){
     return {
-      ibije:"nta na kimwe",
+      ibije:"",
       username:"",
       password:"",
     }
@@ -75,6 +75,7 @@ export default {
         localStorage.setItem("tokens", JSON.stringify(response.data))
       }).catch((error) => {
         console.log("Error:", error);
+        this.ibije="mots de passe incorrect"
       }); 
 
       axios.get("http://127.0.0.1:8000/produit/")
