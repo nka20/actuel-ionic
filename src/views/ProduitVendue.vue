@@ -14,20 +14,20 @@
       <h1>Enregistrement de produit</h1>
       <ion-item>
         <ion-label>Nom</ion-label>
-        <ion-input type="text"></ion-input>
+        <ion-input aria-label="nom" v-model="nom" type="text">nom</ion-input>
       </ion-item>
       <ion-item>
-        <ion-label>Quantité</ion-label>
-        <ion-input type="number"></ion-input>
+        <ion-label>Prix unitaire</ion-label>
+        <ion-input aria-label="number" v-model="prix" type="number">prix unitaire</ion-input>
       </ion-item>
-      <ion-button expand="full"  @click="Login">Enregistrer</ion-button>
+      <ion-button expand="full"  @click="save">Enregistrer</ion-button>
     </div>
     <div class="lists-container">
       <!-- Liste des produits -->
       <div class="list-container">
         <div class="list-title">Liste des produits</div>
         <div class="list">
-          <div class="list-item" v-for="product in ibije" :key="product">
+          <div class="list-item" v-for="product in $store.state.produit" :key="product">
             <p>Id: {{product.id}}</p>
             <p>Nom du produit: {{product.nom}}</p>
             <p>Prix unitaire: {{product.prix_unitaire}}</p>
@@ -52,7 +52,7 @@ import {
   IonToolbar,
 
   IonItem,
-
+IonInput,
   IonLabel,
   IonButton,
 
@@ -62,6 +62,7 @@ export default {
     IonContent,
     IonHeader,
     IonPage,
+    IonInput,
     IonTitle,
     IonToolbar,
     IonItem,
@@ -70,27 +71,51 @@ export default {
 
   },
   data(){
-    axios.get("http://127.0.0.1:8000/vente/")
-     .then((response)=>{
-      this.ibije=response.data.results
-     })
+ 
     return{
       ibije:"",
+      nom:"",
+      prix:"",
     };
   },
   methods: {
-    Login(){
-     axios.get("http://127.0.0.1:8000/produit/")
+    save(){
+      let product={
+        nom:this.nom,
+        prix_unitaire:this.prix,
+      }
+      
+      let headers={
+        headers:{
+          Authorization:'Bearer '+this.$store.state.tokens.access
+        }
+      }
+      console.log(headers)
+      
+      axios.post("http://127.0.0.1:8000/produit/",product,headers)
      .then((response)=>{
-      this.ibije=response.data.results
-     })
+      console.log(response.data)
+      this.$store.state.produit.push(response.data)
+    });
 
 },
-  },
-  logout(){
-      localStorage.removeItem("tokens"),
+logout(){
+  localStorage.removeItem("tokens"),
+      localStorage.removeItem("produit"),
+      localStorage.removeItem ("vente"),
      this.$store.state.tokens=null
+     this.$store.state.produit=null
+     this.$store.state.vente=null
     },
+  },
+    mounted(){
+      axios.get("http://127.0.0.1:8000/produit/")
+     .then((response)=>{
+      this.$store.state.produit=response.data.results
+      console.log(this.$store.state.produit)
+      localStorage.setItem("produit", JSON.stringify(response.data))
+    });
+},
 }
 </script>
 

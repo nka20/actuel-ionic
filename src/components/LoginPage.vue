@@ -35,7 +35,7 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-IonCol,
+  IonCol,
   IonItem,
   IonInput,
   IonLabel,
@@ -65,19 +65,22 @@ export default {
   },
   methods: {
     Login(){
-      let data={
+      let user={
         'username': this.username,
         'password':this.password
       }
-      axios.post("http://127.0.0.1:8000/login/",data)
+      axios.post("http://127.0.0.1:8000/login/",user)
       .then((response)=>{
         this.$store.state.tokens = response.data
         localStorage.setItem("tokens", JSON.stringify(response.data))
+
       }).catch((error) => {
         console.log("Error:", error);
         this.ibije="mots de passe incorrect"
-      }); 
+      });
 
+      console.log('hello')
+/*
       axios.get("http://127.0.0.1:8000/produit/")
      .then((response)=>{
       this.$store.state.produit=response
@@ -89,6 +92,7 @@ export default {
       this.$store.state.vente=response
       localStorage.setItem("vente", JSON.stringify(response.data))
     });
+    */
     }
   },
   mounted(){

@@ -25,12 +25,12 @@
         <div class="list-container">
           <div class="list-title">Liste des ventes</div>
           <div class="list">
-            <div class="list-item" v-for="sale in ibije" :key="sale">
+            <div class="list-item" v-for="sale in $store.state.vente" :key="sale">
               <p>Id: {{ sale.id }}</p>
-              <p>Nom du produit: {{ sale.nomProduit }}</p>
+              <p>Nom du produit: {{ sale.nom }}</p>
               <p>Quantité: {{ sale.quantite }}</p>
-              <p>Prix total: {{ sale.prixTotal }}</p>
-              <p>Prix unitaire: {{ sale.prixUnitaire }}</p>
+              <p>Prix total: {{ sale.prix_total }}</p>
+              <p>Prix unitaire: {{ sale.prix_unitaire }}</p>
               <p>Utilisateur: {{ sale.utilisateur }}</p>
               <div class="horizontal-line"></div>
               </div>
@@ -68,27 +68,31 @@ import {
   
     },
     data(){
-      axios.get("http://127.0.0.1:8000/vente/")
-     .then((response)=>{
-      this.ibije=response.data.results
-     })
+
     return{
-      ibije:"",
     };
   },
     methods: {
     Login(){
      
+},
+logout(){
+  localStorage.removeItem("tokens"),
+      localStorage.removeItem("produit"),
+      localStorage.removeItem ("vente"),
+     this.$store.state.tokens=null
+     this.$store.state.produit=null
+     this.$store.state.vente=null
+    },
+  },
+    mounted(){
       axios.get("http://127.0.0.1:8000/vente/")
      .then((response)=>{
-      this.ibije=response.data.results
-     })
+      this.$store.state.vente=response.data.results
+      console.log(this.$store.state.vente)
+      localStorage.setItem("vente", JSON.stringify(response.data))
+    });
 },
-  },
-  logout(){
-      localStorage.removeItem("tokens"),
-     this.$store.state.tokens=null
-    },
 }
   </script>
   
