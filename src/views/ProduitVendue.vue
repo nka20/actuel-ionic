@@ -14,7 +14,7 @@
       <h1>Enregistrement de produit</h1>
       <ion-item>
         <ion-label>Nom</ion-label>
-        <ion-input aria-label="nom" v-model="nom" type="text">nom</ion-input>
+        <ion-input aria-label="varchar" v-model="nom" type="text">nom</ion-input>
       </ion-item>
       <ion-item>
         <ion-label>Prix unitaire</ion-label>

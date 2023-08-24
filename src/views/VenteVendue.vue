@@ -14,11 +14,11 @@
           <h1>Enregistrement de vente</h1>
           <ion-item>
             <ion-label>Nom du produit</ion-label>
-            <ion-input type="text"></ion-input>
+            <ion-input aria-label="varchar" type="text">nom du produit</ion-input>
           </ion-item>
           <ion-item>
             <ion-label>Prix</ion-label>
-            <ion-input type="number"></ion-input>
+            <ion-input aria-label="number" type="number">prix</ion-input>
           </ion-item>
           <ion-button expand="full" @click="Login">Enregistrer</ion-button>
         </div>
@@ -48,7 +48,7 @@ import {
     IonPage,
     IonTitle,
     IonToolbar,
-  
+    IonInput,
     IonItem,
   
     IonLabel,
@@ -60,6 +60,7 @@ import {
       IonContent,
       IonHeader,
       IonPage,
+      IonInput,
       IonTitle,
       IonToolbar,
       IonItem,
