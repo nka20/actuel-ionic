@@ -105,7 +105,6 @@ export default {
                     .then((response)=>{
       this.$store.state.produit=response.data.results
       this.prod=this.$store.state.produit
-      //console.log(this.$store.state.produit)
       localStorage.setItem("produit", JSON.stringify(response.data))
     });
 
