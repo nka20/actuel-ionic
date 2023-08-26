@@ -19,7 +19,7 @@
           <div class="list-container">
             <div class="list-title">Liste des produits</div>
             <div class="list">
-              <div class="list-item" v-for="product in $store.state.produit" :key="product">
+              <div class="list-item" v-for="product in products" :key="product">
                 <p>Id: {{ product.id }}</p>
                 <p>Nom du produit: {{  product.nom }}</p>
                 <p>Prix unitaire: {{ product.prix_unitaire }}</p>
@@ -36,7 +36,7 @@
           <div class="list-container">
             <div class="list-title">Liste des ventes</div>
             <div class="list">
-              <div class="list-item" v-for="sale in $store.state.vente" :key="sale">
+              <div class="list-item" v-for="sale in sales" :key="sale">
                 <p>Id: {{ sale.id }}</p>
                 <p>Nom du produit: {{ sale.nom }}</p>
                 <p>Quantité: {{ sale.quantite }}</p>
@@ -103,6 +103,7 @@ export default {
     axios.get("http://127.0.0.1:8000/produit/")
      .then((response)=>{
       this.$store.state.produit=response.data.results
+      this.products=this.$store.state.produit
       console.log(response)//pour fournir les donnee seul car si on donne seulement response ca donne trop information d'inutile c est pourquoir on ajoute data.results
       localStorage.setItem("produit", JSON.stringify(response.data))
     });
@@ -110,6 +111,7 @@ export default {
     axios.get("http://127.0.0.1:8000/vente/")
      .then((response)=>{
       this.$store.state.vente=response.data.results
+      this.sales=this.$store.state.vente
       localStorage.setItem("vente", JSON.stringify(response.data))
     });
 }

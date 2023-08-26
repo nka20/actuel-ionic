@@ -27,13 +27,16 @@
       <div class="list-container">
         <div class="list-title">Liste des produits</div>
         <div class="list">
-          <div class="list-item" v-for="product in $store.state.produit" :key="product">
+          
+          <div class="list-item" v-for="product in prod" :key="product.id">
+            <ion-checkbox v-model="product.isSelected" @ionChange="handleCheckboxChange(product)"></ion-checkbox>
             <p>Id: {{product.id}}</p>
             <p>Nom du produit: {{product.nom}}</p>
             <p>Prix unitaire: {{product.prix_unitaire}}</p>
             <p>Utilisateur: {{product.utilisateur}}</p>
             <div class="horizontal-line"></div>
           </div>
+          
 
         </div>
       </div>
@@ -50,7 +53,7 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-
+  IonCheckbox,
   IonItem,
 IonInput,
   IonLabel,
@@ -63,6 +66,7 @@ export default {
     IonHeader,
     IonPage,
     IonInput,
+    IonCheckbox,
     IonTitle,
     IonToolbar,
     IonItem,
@@ -71,32 +75,76 @@ export default {
 
   },
   data(){
- 
     return{
       ibije:"",
       nom:"",
       prix:"",
+      prod:[],
     };
   },
   methods: {
+    handleCheckboxChange(selectedProduct) {
+      this.prod.forEach(product => {
+        if (product !== selectedProduct) {
+          product.isSelected = false;
+        }
+      });
+      if (selectedProduct) {
+        console.log("Vente sélectionnée. ID:", selectedProduct.id);
+       
+        if (confirm("Êtes-vous sûr de vouloir supprimer ce produit ?")) {
+          axios.delete(`http://127.0.0.1:8000/produit/${selectedProduct.id}/`, {
+              headers: {
+                Authorization: 'Bearer ' + this.$store.state.tokens.access,
+              },
+            })
+         .then(response => {
+         // mise a jour de la liste
+        
+               axios.get("http://127.0.0.1:8000/produit/")
+                    .then((response)=>{
+      this.$store.state.produit=response.data.results
+      this.prod=this.$store.state.produit
+      //console.log(this.$store.state.produit)
+      localStorage.setItem("produit", JSON.stringify(response.data))
+    });
+
+
+
+
+              console.log(response);
+              // Actualiser la liste des produits
+              this.prod = this.prod.filter(product => product.id !== selectedProduct.id);
+              console.log('Ressource supprimée avec succès');
+            })
+            .catch(error => {
+              console.error('Erreur lors de la suppression de la ressource:', error);
+            });
+          }
+
+
+      } else {
+        console.log("Vente désélectionnée. ID:", selectedProduct.id);
+      }
+    },
     save(){
       let product={
         nom:this.nom,
         prix_unitaire:this.prix,
       }
-      
       let headers={
         headers:{
-          Authorization:'Bearer '+this.$store.state.tokens.access
+          Authorization: 'Bearer '+this.$store.state.tokens.access
         }
       }
-      console.log(headers)
       
-      axios.post("http://127.0.0.1:8000/produit/",product,headers)
-     .then((response)=>{
-      console.log(response.data)
-      this.$store.state.produit.push(response.data)
-    });
+      axios.post('http://127.0.0.1:8000/produit/', product, headers)
+      .then((response) => {
+        console.log(response)
+        this.$store.state.produit.push(response.data)
+      }).catch((error) => {
+        console.log("Error:", error);
+      });
 
 },
 logout(){
@@ -112,7 +160,8 @@ logout(){
       axios.get("http://127.0.0.1:8000/produit/")
      .then((response)=>{
       this.$store.state.produit=response.data.results
-      console.log(this.$store.state.produit)
+      this.prod=this.$store.state.produit
+      //console.log(this.$store.state.produit)
       localStorage.setItem("produit", JSON.stringify(response.data))
     });
 },

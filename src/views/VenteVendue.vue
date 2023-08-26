@@ -25,7 +25,7 @@
         <div class="list-container">
           <div class="list-title">Liste des ventes</div>
           <div class="list">
-            <div class="list-item" v-for="sale in $store.state.vente" :key="sale">
+            <div class="list-item" v-for="sale in vente" :key="sale">
               <p>Id: {{ sale.id }}</p>
               <p>Nom du produit: {{ sale.nom }}</p>
               <p>Quantité: {{ sale.quantite }}</p>
@@ -71,6 +71,7 @@ import {
     data(){
 
     return{
+      vente:""
     };
   },
     methods: {
@@ -90,7 +91,7 @@ logout(){
       axios.get("http://127.0.0.1:8000/vente/")
      .then((response)=>{
       this.$store.state.vente=response.data.results
-      console.log(this.$store.state.vente)
+      this.vente=this.$store.state.vente
       localStorage.setItem("vente", JSON.stringify(response.data))
     });
 },
