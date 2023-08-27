@@ -14,18 +14,19 @@
           <h1>Enregistrement de vente</h1>
           <ion-item>
             <ion-label>Nom du produit</ion-label>
-            <ion-input aria-label="varchar" type="text">nom du produit</ion-input>
+            <ion-input aria-label="varchar" type="text">produit</ion-input>
           </ion-item>
           <ion-item>
             <ion-label>Prix</ion-label>
             <ion-input aria-label="number" type="number">prix</ion-input>
           </ion-item>
-          <ion-button expand="full" @click="Login">Enregistrer</ion-button>
+          <ion-button expand="full" @click="save">Enregistrer</ion-button>
         </div>
         <div class="list-container">
           <div class="list-title">Liste des ventes</div>
           <div class="list">
             <div class="list-item" v-for="sale in vente" :key="sale">
+              <ion-checkbox v-model="sale.isSelected" @ionChange="handleCheckboxChange(sale)"></ion-checkbox>
               <p>Id: {{ sale.id }}</p>
               <p>Nom du produit: {{ sale.nom }}</p>
               <p>Quantité: {{ sale.quantite }}</p>
@@ -50,7 +51,7 @@ import {
     IonToolbar,
     IonInput,
     IonItem,
-  
+  IonCheckbox,
     IonLabel,
     IonButton,
   
@@ -62,6 +63,7 @@ import {
       IonPage,
       IonInput,
       IonTitle,
+      IonCheckbox,
       IonToolbar,
       IonItem,
       IonLabel,
@@ -71,12 +73,73 @@ import {
     data(){
 
     return{
-      vente:""
+      vente:[]
     };
   },
     methods: {
-    Login(){
-     
+      handleCheckboxChange(selectedSale) {
+      this.vente.forEach(sale => {
+        if (sale !== selectedSale) {
+          sale.isSelected = false;
+        }
+      });
+      if (selectedSale) {
+        console.log("Vente sélectionnée. ID:", selectedSale.id);
+        //console.log(this.$store.state.produit[1]['nom'])
+        if (confirm("Êtes-vous sûr de vouloir supprimer ce produit ?")) {
+          axios.delete(`http://127.0.0.1:8000/vente/${selectedSale.id}/`, {
+              headers: {
+                Authorization: 'Bearer ' + this.$store.state.tokens.access,
+              },
+            })
+         .then(response => {
+         // mise a jour de la liste
+        
+               axios.get("http://127.0.0.1:8000/vente/")
+                    .then((response)=>{
+      this.$store.state.vente=response.data.results
+      this.vente=this.$store.state.vente
+      localStorage.setItem("vente", JSON.stringify(response.data))
+    });
+
+
+
+
+              console.log(response);
+              // Actualiser la liste des produits
+              this.vente = this.vente.filter(sale => sale.id !== selectedSale.id);
+              console.log('Ressource supprimée avec succès');
+            })
+            .catch(error => {
+              console.error('Erreur lors de la suppression de la ressource:', error);
+            });
+          }
+
+
+      } else {
+        console.log("Vente désélectionnée. ID:", selectedSale.id);
+      }
+    },
+    save(){
+      /*
+      let product={
+        nom:this.nom,
+        prix_unitaire:this.prix,
+      }
+      let headers={
+        headers:{
+          Authorization: 'Bearer '+this.$store.state.tokens.access
+        }
+      }
+      
+      axios.post('http://127.0.0.1:8000/produit/', product, headers)
+      .then((response) => {
+        console.log(response)
+        this.$store.state.produit.push(response.data)
+      }).catch((error) => {
+        console.log("Error:", error);
+      });
+*/
 },
 logout(){
   localStorage.removeItem("tokens"),

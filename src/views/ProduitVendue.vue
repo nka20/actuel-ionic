@@ -14,13 +14,13 @@
       <h1>Enregistrement de produit</h1>
       <ion-item>
         <ion-label>Nom</ion-label>
-        <ion-input aria-label="varchar" v-model="nom" type="text">nom</ion-input>
+        <ion-input aria-label="varchar" v-model="nom" required type="text">nom</ion-input>
       </ion-item>
       <ion-item>
         <ion-label>Prix unitaire</ion-label>
-        <ion-input aria-label="number" v-model="prix" type="number">prix unitaire</ion-input>
+        <ion-input aria-label="number" v-model="prix" required type="number">prix unitaire</ion-input>
       </ion-item>
-      <ion-button expand="full"  @click="save">Enregistrer</ion-button>
+      <ion-button expand="full"  @click="save">Modifier</ion-button>
     </div>
     <div class="lists-container">
       <!-- Liste des produits -->
@@ -29,11 +29,12 @@
         <div class="list">
           
           <div class="list-item" v-for="product in prod" :key="product.id">
-            <ion-checkbox v-model="product.isSelected" @ionChange="handleCheckboxChange(product)"></ion-checkbox>
+            <ion-checkbox v-model="product.isSelected"  color="danger" @ionChange="handleCheckboxChange(product)">supprimer</ion-checkbox>
             <p>Id: {{product.id}}</p>
             <p>Nom du produit: {{product.nom}}</p>
             <p>Prix unitaire: {{product.prix_unitaire}}</p>
             <p>Utilisateur: {{product.utilisateur}}</p>
+            <ion-checkbox v-model="product.isSelect" color="success" @ionChange="handleChange(product)">modifier</ion-checkbox>
             <div class="horizontal-line"></div>
           </div>
           
@@ -58,8 +59,10 @@ import {
 IonInput,
   IonLabel,
   IonButton,
+  modalController,
 
 } from '@ionic/vue';
+import Edit from "../components/EditPageModal.vue"
 export default {
   components:{
     IonContent,
@@ -76,9 +79,9 @@ export default {
   },
   data(){
     return{
-      ibije:"",
       nom:"",
       prix:"",
+      id:"",
       prod:[],
     };
   },
@@ -126,6 +129,20 @@ export default {
         console.log("Vente désélectionnée. ID:", selectedProduct.id);
       }
     },
+    async handleChange(product) {
+      const modal = await modalController.create({
+      component: Edit,
+      componentProps:{select:{nom:product.nom, prix:product.prix_unitaire, id:product.id}}
+    });
+
+    modal.present();
+
+    const { data, role } = await modal.onWillDismiss();
+
+    if (role === 'confirm') {
+      this.message = `Hello, ${data}!`;
+    }
+    },
     save(){
       let product={
         nom:this.nom,
@@ -144,7 +161,7 @@ export default {
       }).catch((error) => {
         console.log("Error:", error);
       });
-
+    }
 },
 logout(){
   localStorage.removeItem("tokens"),
@@ -154,7 +171,7 @@ logout(){
      this.$store.state.produit=null
      this.$store.state.vente=null
     },
-  },
+
     mounted(){
       axios.get("http://127.0.0.1:8000/produit/")
      .then((response)=>{
