@@ -161,9 +161,8 @@ export default {
       }).catch((error) => {
         console.log("Error:", error);
       });
-    }
-},
-logout(){
+    },
+    logout(){
   localStorage.removeItem("tokens"),
       localStorage.removeItem("produit"),
       localStorage.removeItem ("vente"),
@@ -171,6 +170,7 @@ logout(){
      this.$store.state.produit=null
      this.$store.state.vente=null
     },
+},
 
     mounted(){
       axios.get("http://127.0.0.1:8000/produit/")

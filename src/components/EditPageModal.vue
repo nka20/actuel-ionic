@@ -23,13 +23,13 @@
           <ion-label>Prix unitaire</ion-label>
           <ion-input aria-label="number" v-model="object.prix" required type="number">prix a editer</ion-input>
         </ion-item>
-        <ion-button expand="full"  >Modifier</ion-button>
+        <ion-button expand="full" @click="modifier" >Modifier</ion-button>
     </div>
 </ion-content>
 </ion-page>
 </template>
 <script >
-//import axios from 'axios';
+import axios from 'axios';
 import {
   IonContent,
   IonHeader,
@@ -44,7 +44,7 @@ IonInput,
 
 
 } from '@ionic/vue';
-import { defineComponent } from 'vue';
+import { defineComponent} from 'vue';
 export default  defineComponent({
   name:'EditPageVue',
   props:["select"],
@@ -66,6 +66,21 @@ export default  defineComponent({
     };
   },
   methods: {
+    modifier() {
+      axios.put(`http://127.0.0.1:8000/produit/${this.object.id}/`,{nom: this.object.nom, prix_unitaire:this.object.prix},{
+          headers: {
+            Authorization: 'Bearer ' + this.$store.state.tokens.access,
+          },
+        })
+        .then(response => {
+           console.log(response)
+          console.log('Produit mis à jour avec succès');
+          return modalController.dismiss(null, 'cancel');
+        })
+        .catch(error => {
+          console.error('Erreur lors de la mise à jour du produit:', error);
+        });
+    },
       cancel() {
         return modalController.dismiss(null, 'cancel');
       },
