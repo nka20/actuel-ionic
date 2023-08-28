@@ -26,13 +26,13 @@
           <div class="list-title">Liste des ventes</div>
           <div class="list">
             <div class="list-item" v-for="sale in vente" :key="sale">
-              <ion-checkbox v-model="sale.isSelected" @ionChange="handleCheckboxChange(sale)"></ion-checkbox>
               <p>Id: {{ sale.id }}</p>
               <p>Nom du produit: {{ sale.nom }}</p>
               <p>Quantité: {{ sale.quantite }}</p>
               <p>Prix total: {{ sale.prix_total }}</p>
               <p>Prix unitaire: {{ sale.prix_unitaire }}</p>
               <p>Utilisateur: {{ sale.utilisateur }}</p>
+              <ion-button v-model="sale.isSelected" color="danger" @click="handleCheckboxChange(sale)">supprimer</ion-button>
               <div class="horizontal-line"></div>
               </div>
           </div>
@@ -51,7 +51,6 @@ import {
     IonToolbar,
     IonInput,
     IonItem,
-  IonCheckbox,
     IonLabel,
     IonButton,
   
@@ -63,7 +62,6 @@ import {
       IonPage,
       IonInput,
       IonTitle,
-      IonCheckbox,
       IonToolbar,
       IonItem,
       IonLabel,

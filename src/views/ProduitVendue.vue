@@ -32,8 +32,8 @@
             <p>Nom du produit: {{product.nom}}</p>
             <p>Prix unitaire: {{product.prix_unitaire}}</p>
             <p>Utilisateur: {{product.utilisateur}}</p>
-            <ion-checkbox v-model="product.isSelected"  color="danger" @ionChange="handleCheckboxChange(product)">supprimer</ion-checkbox>
-            <ion-checkbox class="block" v-model="product.isSelect" color="success" @ionChange="handleChange(product)">modifier</ion-checkbox>
+            <ion-button v-model="product.isSelected"  color="danger" @click="handleCheckboxChange(product)">supprimer</ion-button>
+            <ion-button class="block" v-model="product.isSelect" color="success" @click="handleChange(product)">modifier</ion-button>
             <div class="horizontal-line"></div>
           </div>
         </div>
@@ -51,7 +51,6 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonCheckbox,
   IonItem,
 IonInput,
   IonLabel,
@@ -66,7 +65,6 @@ export default {
     IonHeader,
     IonPage,
     IonInput,
-    IonCheckbox,
     IonTitle,
     IonToolbar,
     IonItem,
@@ -84,13 +82,6 @@ export default {
   },
   methods: {
     handleCheckboxChange(selectedProduct) {
-      this.prod.forEach(product => {
-        if (product !== selectedProduct) {
-          product.isSelected = false;
-        }
-      });
-      if (selectedProduct) {
-        console.log("Vente sélectionnée. ID:", selectedProduct.id);
        
         if (confirm("Êtes-vous sûr de vouloir supprimer ce produit ?")) {
           axios.delete(`http://127.0.0.1:8000/produit/${selectedProduct.id}/`, {
@@ -118,16 +109,10 @@ export default {
             })
             .catch(error => {
               console.error('Erreur lors de la suppression de la ressource:', error);
-            });
-          }
+            })
 
 
-      } else {
-        console.log("Vente désélectionnée. ID:", selectedProduct.id);
-      }
-    },
-    allan(){
-      console.log("do it")
+      } 
     },
     async handleChange(product) {
       const modal = await modalController.create({
