@@ -9,7 +9,7 @@
     </ion-toolbar>
   </ion-header>
   
-  <ion-content>
+  <ion-content class="ion-padding">
     <div class="container">
       <h1>Enregistrement de produit</h1>
       <ion-item>
@@ -27,18 +27,15 @@
       <div class="list-container">
         <div class="list-title">Liste des produits</div>
         <div class="list">
-          
-          <div class="list-item" v-for="product in prod" :key="product.id">
-            <ion-checkbox v-model="product.isSelected"  color="danger" @ionChange="handleCheckboxChange(product)">supprimer</ion-checkbox>
+          <div class="list-item"  v-for="product in prod" :key="product.id">
             <p>Id: {{product.id}}</p>
             <p>Nom du produit: {{product.nom}}</p>
             <p>Prix unitaire: {{product.prix_unitaire}}</p>
             <p>Utilisateur: {{product.utilisateur}}</p>
-            <ion-checkbox v-model="product.isSelect" color="success" @ionChange="handleChange(product)">modifier</ion-checkbox>
+            <ion-checkbox v-model="product.isSelected"  color="danger" @ionChange="handleCheckboxChange(product)">supprimer</ion-checkbox>
+            <ion-checkbox class="block" v-model="product.isSelect" color="success" @ionChange="handleChange(product)">modifier</ion-checkbox>
             <div class="horizontal-line"></div>
           </div>
-          
-
         </div>
       </div>
       </div>
@@ -129,6 +126,9 @@ export default {
         console.log("Vente désélectionnée. ID:", selectedProduct.id);
       }
     },
+    allan(){
+      console.log("do it")
+    },
     async handleChange(product) {
       const modal = await modalController.create({
       component: Edit,
@@ -189,4 +189,10 @@ export default {
   border-bottom: 1px solid #ccc;
   height: 100%;
 }
+.block {
+  align-items: center;
+  justify-content: center;
+}
+
+
 </style>
