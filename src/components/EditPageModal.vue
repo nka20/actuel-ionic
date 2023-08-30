@@ -62,6 +62,7 @@ export default  defineComponent({
   },
   data(){
     return{
+      prod:this.$store.state.produit,
       object:this.select
     };
   },
@@ -73,9 +74,10 @@ export default  defineComponent({
           },
         })
         .then(response => {
-           console.log(response)
-          console.log('Produit mis à jour avec succès');
-          return modalController.dismiss(null, 'cancel');
+          /*let index = this.$store.state.produit.findIndex(x => x.id == this.object.id)
+          this.$store.state.produit[index] = response.data*/
+          console.log(response)
+          return modalController.dismiss(this.object, 'confirm');
         })
         .catch(error => {
           console.error('Erreur lors de la mise à jour du produit:', error);
@@ -84,6 +86,11 @@ export default  defineComponent({
       cancel() {
         return modalController.dismiss(null, 'cancel');
       },
+      watch:{
+        "$store.state.produit"(new_val){
+            this.prod=new_val
+}
+      }
     },
 })
 </script>

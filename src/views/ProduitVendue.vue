@@ -32,10 +32,13 @@
             <p>Nom du produit: {{product.nom}}</p>
             <p>Prix unitaire: {{product.prix_unitaire}}</p>
             <p>Utilisateur: {{product.utilisateur}}</p>
-            <ion-button v-model="product.isSelected"  color="danger" @click="handleCheckboxChange(product)">supprimer</ion-button>
-            <ion-button class="block" v-model="product.isSelect" color="success" @click="handleChange(product)">modifier</ion-button>
+            <ion-button v-model="product.isSelected"  color="danger" @click="supprimer(product)">supprimer</ion-button>
+            <ion-button class="block" v-model="product.isSelect" color="success" @click="modal(product)">modifier</ion-button>
             <div class="horizontal-line"></div>
           </div>
+          <ion-infinite-scroll @ionInfinite="ionInfinite">
+            <ion-infinite-scroll-content></ion-infinite-scroll-content>
+          </ion-infinite-scroll>
         </div>
       </div>
       </div>
@@ -45,6 +48,7 @@
 
 <script >
 import axios from 'axios';
+import { defineComponent} from 'vue';
 import {
   IonContent,
   IonHeader,
@@ -52,6 +56,8 @@ import {
   IonTitle,
   IonToolbar,
   IonItem,
+  IonInfiniteScroll,
+    IonInfiniteScrollContent,
 IonInput,
   IonLabel,
   IonButton,
@@ -59,13 +65,15 @@ IonInput,
 
 } from '@ionic/vue';
 import Edit from "../components/EditPageModal.vue"
-export default {
+export default defineComponent({
   components:{
     IonContent,
     IonHeader,
     IonPage,
     IonInput,
     IonTitle,
+    IonInfiniteScroll,
+    IonInfiniteScrollContent,
     IonToolbar,
     IonItem,
     IonLabel,
@@ -78,10 +86,11 @@ export default {
       prix:"",
       id:"",
       prod:[],
+      next_link: null,
     };
   },
   methods: {
-    handleCheckboxChange(selectedProduct) {
+    supprimer(selectedProduct) {
        
         if (confirm("Êtes-vous sûr de vouloir supprimer ce produit ?")) {
           axios.delete(`http://127.0.0.1:8000/produit/${selectedProduct.id}/`, {
@@ -98,10 +107,6 @@ export default {
       this.prod=this.$store.state.produit
       localStorage.setItem("produit", JSON.stringify(response.data))
     });
-
-
-
-
               console.log(response);
               // Actualiser la liste des produits
               this.prod = this.prod.filter(product => product.id !== selectedProduct.id);
@@ -114,7 +119,7 @@ export default {
 
       } 
     },
-    async handleChange(product) {
+    async modal(product) {
       const modal = await modalController.create({
       component: Edit,
       componentProps:{select:{nom:product.nom, prix:product.prix_unitaire, id:product.id}}
@@ -125,6 +130,7 @@ export default {
     const { data, role } = await modal.onWillDismiss();
 
     if (role === 'confirm') {
+      this.$store.state.produit=data
       this.message = `Hello, ${data}!`;
     }
     },
@@ -155,9 +161,7 @@ export default {
      this.$store.state.produit=null
      this.$store.state.vente=null
     },
-},
-
-    mounted(){
+    getProducts(){
       axios.get("http://127.0.0.1:8000/produit/")
      .then((response)=>{
       this.$store.state.produit=response.data.results
@@ -165,8 +169,42 @@ export default {
       //console.log(this.$store.state.produit)
       localStorage.setItem("produit", JSON.stringify(response.data))
     });
+    },
+    getDatas(){
+        axios.get(this.next_link)
+        .then((response) => {
+          if(response.data.next!=null)
+            this.next_link = response.data.next
+          else this.next_link=null   // this.products = response.data.results
+            this.$store.state.produit.push(...response.data.results)
+            console.log(this.$store.state.produit)
+          }).catch(()=>{
+            alert("Pas de donnees !")
+          })  
+    },
+    ionInfinite(e){
+      console.log(e, "yahashitse")
+      e.target.complete()
+      this.getDatas()
+    },
 },
+
+   mounted(){
+      axios.get("http://127.0.0.1:8000/produit/")
+    .then((response) => {
+      if(response.data.next != null)
+      this.next_link = response.data.next
+      this.$store.state.produit = response.data.results
+      this.prod=this.$store.state.produit
+})
+
+    },
+    watch:{
+        "$store.state.produit"(new_val){
+            this.prod=new_val
 }
+},
+})
 </script>
 
 <style scoped>
