@@ -13,8 +13,8 @@
         <div class="container">
           <h1>Enregistrement de vente</h1>
           <ion-item>
-            <ion-select placeholder="Select a name of product" v-model="produits">
-                <ion-select-option v-for="produit in produits" :key="produit.id" :value="produit">{{ produit.nom }} - {{ produit.prix_de_vente_unitaire }}</ion-select-option>
+            <ion-select placeholder="Select a name of product"  v-model="produit">
+                <ion-select-option v-for="produit in produits" :key="produit.id" :value="produit" >{{ produit.nom }} - {{ produit.prix_unitaire }}</ion-select-option>
                 <ion-infinite-scroll @ionInfinite="ionInfinite">
                   <ion-infinite-scroll-content></ion-infinite-scroll-content>
                 </ion-infinite-scroll>
@@ -56,6 +56,7 @@ import {
     IonPage,
     IonTitle,
     IonToolbar,
+    IonSelect,
     IonInfiniteScroll,
     IonInfiniteScrollContent,
     IonInput,
@@ -68,6 +69,7 @@ import {
     components:{
       IonContent,
       IonHeader,
+      IonSelect,
       IonPage,
         IonInfiniteScroll,
     IonInfiniteScrollContent,
@@ -84,10 +86,19 @@ import {
     return{
       vente:[],
       next_link: null,
-      produits:null
+      produit:"",
+   produits:null,
     };
   },
     methods: {
+      handleSelectedProductChange() {
+      if (this.produit) {
+        console.log(this.produit.nom)
+      }
+      else{
+        console.log('NULL')
+      }
+    },
       handleCheckboxChange(selectedSale) {
       this.vente.forEach(sale => {
         if (sale !== selectedSale) {
@@ -132,11 +143,14 @@ import {
       }
     },
     save(){
-      /*
-      let product={
-        nom:this.nom,
-        prix_unitaire:this.prix,
+      console.log(this.prdoduit)
+      
+      let vente={
+        nom:this.produit.nom,
+        prix_unitaire:this.produit.prix_unitaire,
       }
+      console.log(vente)
+      /*
       let headers={
         headers:{
           Authorization: 'Bearer '+this.$store.state.tokens.access
@@ -189,7 +203,11 @@ logout(){
 axios.get("http://127.0.0.1:8000/produit/",).then((response) => {
             this.produits = response.data.results
             let nextPage = response.data.next;
-for (let i=1;i <=11;i++) {
+//while(response.data.next != null){
+console.log(response.data.results)
+//response.data.next++
+//}
+for (let i=2;i <=10;i++) {
   console.log(nextPage)
   axios.get(`http://127.0.0.1:8000/produit/?page=${i}`).then((response) => {
     this.produits.push(...response.data.results);
@@ -197,11 +215,10 @@ for (let i=1;i <=11;i++) {
   });
 }})
 
+
     },
     watch:{
-        "$store.state.vente"(new_val){
-            this.prod=new_val
-}
+    produit: "handleSelectedProductChange",
 },
 }
   </script>
