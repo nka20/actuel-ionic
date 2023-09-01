@@ -46,7 +46,7 @@ IonInput,
 } from '@ionic/vue';
 import { defineComponent} from 'vue';
 export default  defineComponent({
-  name:'EditPageVue',
+  name:'EditProduitVue',
   props:["select"],
   components:{
     IonContent,

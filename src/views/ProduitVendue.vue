@@ -20,7 +20,7 @@
         <ion-label>Prix unitaire</ion-label>
         <ion-input aria-label="number" v-model="prix" required type="number">prix unitaire</ion-input>
       </ion-item>
-      <ion-button expand="full"  @click="save">Modifier</ion-button>
+      <ion-button expand="full"  @click="save">Enregstrer</ion-button>
     </div>
     <div class="lists-container">
       <!-- Liste des produits -->
@@ -64,7 +64,7 @@ IonInput,
   modalController,
 
 } from '@ionic/vue';
-import Edit from "../components/EditPageModal.vue"
+import Edit from "../components/EditProduitModal.vue"
 export default defineComponent({
   components:{
     IonContent,

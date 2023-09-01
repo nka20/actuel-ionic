@@ -22,7 +22,7 @@
    </ion-item>
           <ion-item>
             <ion-label>Prix</ion-label>
-            <ion-input aria-label="number" type="number">prix</ion-input>
+            <ion-input aria-label="number" v-model="quantite" type="number">quantite</ion-input>
           </ion-item>
           <ion-button expand="full" @click="save">Enregistrer</ion-button>
         </div>
@@ -34,9 +34,10 @@
               <p>Nom du produit: {{ sale.nom }}</p>
               <p>Quantité: {{ sale.quantite }}</p>
               <p>Prix total: {{ sale.prix_total }}</p>
-              <p>Prix unitaire: {{ sale.prix_unitaire }}</p>
+              <p>Prix unique: {{ sale.prix_unique }}</p>
               <p>Utilisateur: {{ sale.utilisateur }}</p>
               <ion-button v-model="sale.isSelected" color="danger" @click="handleCheckboxChange(sale)">supprimer</ion-button>
+              <ion-button class="block" v-model="sale.isSelect" color="success" @click="modal(sale)">modifier</ion-button>
               <div class="horizontal-line"></div>
               </div>
               <ion-infinite-scroll @ionInfinite="ionInfinite">
@@ -50,6 +51,7 @@
 </template>
 <script>
 import axios from 'axios';
+import Edit from "../components/EditVenteModal.vue"
 import {
     IonContent,
     IonHeader,
@@ -63,6 +65,8 @@ import {
     IonItem,
     IonLabel,
     IonButton,
+    modalController,
+
   
   } from '@ionic/vue';
   export default {
@@ -82,12 +86,12 @@ import {
   
     },
     data(){
-
     return{
       vente:[],
       next_link: null,
       produit:"",
    produits:null,
+   quantite:""
     };
   },
     methods: {
@@ -142,29 +146,45 @@ import {
         console.log("Vente désélectionnée. ID:", selectedSale.id);
       }
     },
+    async modal(sale) {
+      const modal = await modalController.create({
+      component: Edit,
+      componentProps:{select:{nom:sale.nom,kilos:sale.quantite, prixU:sale.prix_unique,prixT:sale.quantite * sale.prix_unitaire, id:sale.id}}
+    });
+
+    modal.present();
+
+    const { data, role } = await modal.onWillDismiss();
+
+    if (role === 'confirm') {
+      this.$store.state.vente=data
+      this.message = `Hello, ${data}!`;
+    }
+    },
     save(){
       console.log(this.prdoduit)
       
       let vente={
-        nom:this.produit.nom,
-        prix_unitaire:this.produit.prix_unitaire,
+        nom:this.produit.id,
+        prix_unique:this.produit.prix_unitaire,
+        prix_total:this.quantite * this.produit.prix_unitaire,
+        quantite:this.quantite
+
       }
-      console.log(vente)
-      /*
       let headers={
         headers:{
           Authorization: 'Bearer '+this.$store.state.tokens.access
         }
       }
       
-      axios.post('http://127.0.0.1:8000/produit/', product, headers)
+      axios.post('http://127.0.0.1:8000/vente/', vente, headers)
       .then((response) => {
+        console.log(this.vente)
         console.log(response)
-        this.$store.state.produit.push(response.data)
+        this.$store.state.vente.push(response.data)
       }).catch((error) => {
         console.log("Error:", error);
       });
-*/
 },
 logout(){
   localStorage.removeItem("tokens"),
@@ -199,21 +219,37 @@ logout(){
       this.next_link = response.data.next
       this.$store.state.vente = response.data.results
       this.vente=this.$store.state.vente
-})
+});
 axios.get("http://127.0.0.1:8000/produit/",).then((response) => {
             this.produits = response.data.results
-            let nextPage = response.data.next;
+          //
+            //let nextPage = response.data.next;
 //while(response.data.next != null){
 console.log(response.data.results)
 //response.data.next++
 //}
+/*
 for (let i=2;i <=10;i++) {
   console.log(nextPage)
   axios.get(`http://127.0.0.1:8000/produit/?page=${i}`).then((response) => {
     this.produits.push(...response.data.results);
     nextPage = response.data.next;
   });
-}})
+}*/
+/*
+getData(){
+    axios.get(url, headers)
+    .then((response) => {
+        this.produits.push(...response.data.results);
+        nextPage = response.data.next;
+        if(nextPage != null){
+            this.getData(nextPage)
+        }
+    });  
+}*/
+}
+)
+//
 
 
     },
