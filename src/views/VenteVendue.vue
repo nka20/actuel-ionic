@@ -9,7 +9,7 @@
         </ion-toolbar>
       </ion-header>
       
-      <ion-content>
+     
         <div class="container">
           <h1>Enregistrement de vente</h1>
           <ion-item>
@@ -26,6 +26,7 @@
           </ion-item>
           <ion-button expand="full" @click="save">Enregistrer</ion-button>
         </div>
+         <ion-content>
         <div class="list-container">
           <div class="list-title">Liste des ventes</div>
           <div class="list">
@@ -223,19 +224,21 @@ logout(){
 axios.get("http://127.0.0.1:8000/produit/",).then((response) => {
             this.produits = response.data.results
           //
-            //let nextPage = response.data.next;
+            let nextPage = response.data.next;
 //while(response.data.next != null){
-console.log(response.data.results)
+//console.log(response.data.next != null)
 //response.data.next++
 //}
-/*
+
 for (let i=2;i <=10;i++) {
   console.log(nextPage)
-  axios.get(`http://127.0.0.1:8000/produit/?page=${i}`).then((response) => {
+  axios.get(`http://127.0.0.1:8000/produit/?page=${i}`,this.headers).then((response) => {
     this.produits.push(...response.data.results);
     nextPage = response.data.next;
+    console.log(nextPage)
+    
   });
-}*/
+}
 /*
 getData(){
     axios.get(url, headers)

@@ -16,16 +16,16 @@
       <div class="container">
         <h1>modification</h1>
         <ion-item>
-            <ion-select placeholder="Select a name of product"  v-model="produit">
-                <ion-select-option v-for="produit in produits" :key="produit.id" :value="produit" >{{ produit.nom }} - {{ produit.prix_unitaire }}</ion-select-option>
+            <ion-select placeholder="Do you want change a name of product"  v-model="produit">
+              <ion-select-option v-for="produit in produits" :key="produit.id" :value="produit" >{{ produit.nom }} - {{ produit.prix_unitaire }}</ion-select-option>
                 <ion-infinite-scroll @ionInfinite="ionInfinite">
                   <ion-infinite-scroll-content></ion-infinite-scroll-content>
                 </ion-infinite-scroll>
               </ion-select>
-   </ion-item>
+            </ion-item>
         <ion-item>
           <ion-label>Quantite</ion-label>
-          <ion-input aria-label="number" v-model="object.kilos" required type="number">quantite</ion-input>
+          <ion-input aria-label="number" v-model="object.kilos" type="number">quantite</ion-input>
         </ion-item>
         <ion-button expand="full" @click="modifier" >Modifier</ion-button>
     </div>
@@ -46,6 +46,7 @@ IonInput,
   IonInfiniteScroll,
     IonInfiniteScrollContent,
   IonButton,
+  IonSelect,
   modalController,
 
 
@@ -66,22 +67,30 @@ export default  defineComponent({
     IonItem,
     IonLabel,
     IonButton,
+    IonSelect
 
   },
   data(){
     return{
       prod:this.$store.state.produit,
       object:this.select,
-      produit:"allan",
-      produits:""
+      produit:{
+        nom:this.select.nom,
+        prix_unitaire:this.select.prixU
+    },
+      produits:null
     };
   },
   methods: {
     modifier() {
-     /* let send={
-        nom: this.produit.nom,
-      }*/
-      axios.put(`http://127.0.0.1:8000/vente/${this.object.id}/`,{nom: this.object.nom, quantite:this.object.kilos,prix_unique:this.object.nom.prix_unique,prix_total:this.produit.prix_unique * this.object.kilos},{
+      let send={
+        id: this.produit.id,
+        prixU:this.produit.prix_unitaire,
+        prixT:this.object.kilos * this.produit.prix_unitaire,
+        quantite:this.object.kilos
+      }
+      console.log(send)
+      axios.put(`http://127.0.0.1:8000/vente/${this.object.id}/`,{nom: send.id, quantite:send.quantite,prix_unitaire:send.prixU,prix_total:send.prixU * send.kilos},{
           headers: {
             Authorization: 'Bearer ' + this.$store.state.tokens.access,
           },
@@ -90,7 +99,7 @@ export default  defineComponent({
           /*let index = this.$store.state.produit.findIndex(x => x.id == this.object.id)
           this.$store.state.produit[index] = response.data*/
           console.log(response)
-          return modalController.dismiss(this.object, 'confirm');
+          return modalController.dismiss(send, 'confirm');
         })
         .catch(error => {
           console.error('Erreur lors de la mise à jour du produit:', error);
