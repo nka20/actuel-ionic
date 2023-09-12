@@ -5,6 +5,7 @@
       <ion-title>
         Produit
       </ion-title>
+      <ion-searchbar placeholder="Do you want change a name of product" @keyup.enter="handlerInput($event)"  v-model="chercher"></ion-searchbar>
       <ion-button slot="end" color="danger" @click="logout">logout</ion-button>
     </ion-toolbar>
   </ion-header>
@@ -22,12 +23,19 @@
       </ion-item>
       <ion-button expand="full"  @click="save">Enregstrer</ion-button>
     </div>
+    <ion-searchbar placeholder="Do you want change a name of product" @keyup.enter="handlerInput($event)"  v-model="chercher"></ion-searchbar>
+    <div class="lists-container">
+      <!-- Liste des produits -->
+      <ion-label v-for="az in searchedData" :key="az">
+        <h1>{{az.nom}}-{{az.prix_unitaire}}</h1>
+        </ion-label>
+    </div>
     <div class="lists-container">
       <!-- Liste des produits -->
       <div class="list-container">
         <div class="list-title">Liste des produits</div>
-        <div class="list">
-          <div class="list-item"  v-for="product in prod" :key="product.id">
+        <div class="list" >
+          <div class="list-item"   v-for="product in $store.state.produit" :key="product.id">
             <p>Id: {{product.id}}</p>
             <p>Nom du produit: {{product.nom}}</p>
             <p>Prix unitaire: {{product.prix_unitaire}}</p>
@@ -85,11 +93,28 @@ export default defineComponent({
       nom:"",
       prix:"",
       id:"",
-      prod:[],
+      prod:this.$store.state.produit,
       next_link: null,
+      searchedData:[]
     };
   },
   methods: {
+    handlerInput(e){
+      let data={"keyword":e.target.value.toLowerCase()}
+      axios.post(`http://127.0.0.1:8000/produit/search/`,data,{
+          headers: {
+            Authorization: 'Bearer ' + this.$store.state.tokens.access,
+          },
+        })
+        .then(response => {
+         //console.log(response.data)
+         this.searchedData=response.data
+        })
+        .catch(error => {
+          console.error('Erreur lors de la mise à jour du produit:', error);
+        });
+
+},
     supprimer(selectedProduct) {
        
         if (confirm("Êtes-vous sûr de vouloir supprimer ce produit ?")) {
@@ -191,12 +216,11 @@ export default defineComponent({
 
    mounted(){
       axios.get("http://127.0.0.1:8000/produit/")
-    .then((response) => {
-      if(response.data.next != null)
-      this.next_link = response.data.next
-      this.$store.state.produit = response.data.results
-      this.prod=this.$store.state.produit
-})
+      .then((response) => {
+        if(response.data.next != null)
+        this.next_link = response.data.next
+        this.$store.state.produit = response.data.results
+      })
 
     },
     watch:{

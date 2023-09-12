@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router';
 import store from './store';
 import axios from 'axios';
+import mixins from "./mixins"
 
 import { IonicVue } from '@ionic/vue';
 
@@ -32,7 +33,8 @@ window.axios=axios;
 const app = createApp(App)
   .use(IonicVue)
   .use(router)
-  .use(store);
+  .use(store)
+  .mixin(mixins)
   
 router.isReady().then(() => {
   app.mount('#app');

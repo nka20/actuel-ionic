@@ -5,6 +5,7 @@
         <ion-title>
           Accueil
         </ion-title>
+        <ion-searchbar placeholder="Do you want change a name of product" @keyup.enter="handlerInput($event)"  v-model="chercher"></ion-searchbar>
         <ion-button slot="end" color="danger" @click="logout">logout</ion-button>
       </ion-toolbar>
     </ion-header>
@@ -16,37 +17,9 @@
         <!-- Conteneur avec mise en page flex -->
         <div class="lists-container">
           <!-- Liste des produits -->
-          <div class="list-container">
-            <div class="list-title">Liste des produits</div>
-            <div class="list">
-              <div class="list-item" v-for="product in products" :key="product">
-                <p>Id: {{ product.id }}</p>
-                <p>Nom du produit: {{  product.nom }}</p>
-                <p>Prix unitaire: {{ product.prix_unitaire }}</p>
-                <p>Utilisateur: {{ product.utilisateur }}</p>
-                <div class="horizontal-line"></div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Ligne verticale de séparation -->
-          <div class="vertical-line"></div>
-          
-          <!-- Liste des ventes -->
-          <div class="list-container">
-            <div class="list-title">Liste des ventes</div>
-            <div class="list">
-              <div class="list-item" v-for="sale in sales" :key="sale">
-                <p>Id: {{ sale.id }}</p>
-                <p>Nom du produit: {{ sale.nom }}</p>
-                <p>Quantité: {{ sale.quantite }}</p>
-                <p>Prix total: {{ sale.prix_total }}</p>
-                <p>Prix unitaire: {{ sale.prix_unitaire }}</p>
-                <p>Utilisateur: {{ sale.utilisateur }}</p>
-                <div class="horizontal-line"></div>
-              </div>
-            </div>
-          </div>
+          <ion-label v-for="az in searchedData" :key="az">
+            <h1>{{az.nom}}-{{az.prix_unitaire}}</h1>
+            </ion-label>
         </div>
         
         <!-- Boutons de navigation -->
@@ -66,7 +39,7 @@
 //import produit from "../components/ProduitVendue.vue";
 //import vente from "../components/VenteVendue.vue";
 import axios from 'axios';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton } from '@ionic/vue';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton,IonSearchbar } from '@ionic/vue';
 export default {
   components: {
    // vente,
@@ -76,7 +49,8 @@ export default {
     IonPage,
     IonTitle,
     IonToolbar,
-    IonButton
+    IonButton,
+    IonSearchbar
   },
   data() {
 
@@ -85,11 +59,28 @@ export default {
       //modal_produit:false ,
       products:"",
       sales:"",
+      searchedData:[]
       //products:this.$store.state.produit.results// Remplacez cela par vos données réelles de produits
       //sales: this.$store.state.vente.results // Remplacez cela par vos données réelles de ventes
     };
   },
   methods: {
+    handlerInput(e){
+      let data={"keyword":e.target.value.toLowerCase()}
+      axios.post(`http://127.0.0.1:8000/produit/search/`,data,{
+          headers: {
+            Authorization: 'Bearer ' + this.$store.state.tokens.access,
+          },
+        })
+        .then(response => {
+         //console.log(response.data)
+         this.searchedData=response.data
+        })
+        .catch(error => {
+          console.error('Erreur lors de la mise à jour du produit:', error);
+        });
+
+},
     logout(){
       localStorage.removeItem("tokens"),
       localStorage.removeItem("produit"),
@@ -144,11 +135,6 @@ export default {
 
 .list-item {
   margin-bottom: 15px;
-}
-
-.vertical-line {
-  border-left: 1px solid #ccc;
-  height: 100%;
 }
 .horizontal-line {
   border-bottom: 1px solid #ccc;

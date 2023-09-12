@@ -68,16 +68,16 @@ export default  defineComponent({
   },
   methods: {
     modifier() {
-      axios.put(`http://127.0.0.1:8000/produit/${this.object.id}/`,{nom: this.object.nom, prix_unitaire:this.object.prix},{
-          headers: {
-            Authorization: 'Bearer ' + this.$store.state.tokens.access,
-          },
-        })
+      axios.put(`${this.url}/produit/${this.object.id}/`,{nom: this.object.nom, prix_unitaire:this.object.prix},
+          this.header
+        )
         .then(response => {
-          /*let index = this.$store.state.produit.findIndex(x => x.id == this.object.id)
-          this.$store.state.produit[index] = response.data*/
+          let index = this.$store.state.produit.findIndex(x => x.id == this.object.id)
+          this.$store.state.produit[index] = response.data
+         /* console.log(this.$store.state.produit)*/
+          console.log(index)
           console.log(response)
-          return modalController.dismiss(this.object, 'confirm');
+          return modalController.dismiss(this.$store.state.produit, 'confirm');
         })
         .catch(error => {
           console.error('Erreur lors de la mise à jour du produit:', error);

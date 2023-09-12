@@ -14,15 +14,17 @@
     
     <ion-content>
       <div class="container">
-        <h1>modification</h1>
         <ion-item>
-            <ion-select placeholder="Do you want change a name of product"  v-model="produit">
-              <ion-select-option v-for="produit in produits" :key="produit.id" :value="produit" >{{ produit.nom }} - {{ produit.prix_unitaire }}</ion-select-option>
-                <ion-infinite-scroll @ionInfinite="ionInfinite">
-                  <ion-infinite-scroll-content></ion-infinite-scroll-content>
-                </ion-infinite-scroll>
-              </ion-select>
-            </ion-item>
+        <h1>modification</h1>
+            <ion-searchbar placeholder="Do you want change a name of product" @keyup.enter="handlerInput($event)"  v-model="chercher"></ion-searchbar>
+          </ion-item>
+          <ion-item>
+          <ion-list>
+            <ion-label v-for="az in searchedData" :key="az">
+              <h1>{{az.nom}}-{{az.prix_unitaire}}</h1>
+            </ion-label>
+          </ion-list>
+        </ion-item>
         <ion-item>
           <ion-label>Quantite</ion-label>
           <ion-input aria-label="number" v-model="object.kilos" type="number">quantite</ion-input>
@@ -43,11 +45,10 @@ import {
   IonItem,
 IonInput,
   IonLabel,
-  IonInfiniteScroll,
-    IonInfiniteScrollContent,
   IonButton,
-  IonSelect,
   modalController,
+  IonSearchbar,
+  IonList
 
 
 } from '@ionic/vue';
@@ -62,44 +63,74 @@ export default  defineComponent({
     IonInput,
     IonTitle,
     IonToolbar,
-    IonInfiniteScroll,
-    IonInfiniteScrollContent,
     IonItem,
     IonLabel,
     IonButton,
-    IonSelect
-
+    IonSearchbar,
+    IonList
   },
   data(){
     return{
       prod:this.$store.state.produit,
       object:this.select,
+      
       produit:{
-        nom:this.select.nom,
+        id:this.select.id,
         prix_unitaire:this.select.prixU
     },
-      produits:null
+        chercher:"",
+         produits:null,
+         searchedData:[]
     };
   },
   methods: {
-    modifier() {
-      let send={
-        id: this.produit.id,
-        prixU:this.produit.prix_unitaire,
-        prixT:this.object.kilos * this.produit.prix_unitaire,
-        quantite:this.object.kilos
-      }
-      console.log(send)
-      axios.put(`http://127.0.0.1:8000/vente/${this.object.id}/`,{nom: send.id, quantite:send.quantite,prix_unitaire:send.prixU,prix_total:send.prixU * send.kilos},{
+    handlerInput(e){
+      let data={"keyword":e.target.value.toLowerCase()}
+      axios.post(`http://127.0.0.1:8000/produit/search/`,data,{
           headers: {
             Authorization: 'Bearer ' + this.$store.state.tokens.access,
           },
         })
         .then(response => {
-          /*let index = this.$store.state.produit.findIndex(x => x.id == this.object.id)
-          this.$store.state.produit[index] = response.data*/
+         //console.log(response.data)
+         this.searchedData=response.data
+        })
+        .catch(error => {
+          console.error('Erreur lors de la mise à jour du produit:', error);
+        });
+
+},
+    chercherP(){
+          if(this.chercher.trim().length ==0){
+            return this.$store.state.produit,
+            console.log(this.prod)
+          }
+          if(this.chercher.toLowerCase() != this.chercher.toUpperCase()){
+            return this.$store.state.produit.filter((i)=>i.nom.toLowerCase().includes(this.chercher.trim.toLowerCase())),
+            console.log(this.prod)
+          }
+          else{
+            return this.$store.state.produit.filter((i)=> i.prix_unitaire.toString().includes(this.chercher.trim()))
+          }
+        },
+    modifier() {
+      let send={
+        nom: this.produit.id,
+        prix_unique:this.produit.prix_unitaire,
+        prix_total:this.object.kilos * this.produit.prix_unitaire,
+        quantite:this.object.kilos
+      }
+      console.log(send.prixT,send.prixU)
+      axios.put(`http://127.0.0.1:8000/vente/${this.object.id}/`,send,{
+          headers: {
+            Authorization: 'Bearer ' + this.$store.state.tokens.access,
+          },
+        })
+        .then(response => {
+          let index = this.$store.state.vente.findIndex(x => x.id == this.object.id)
+          this.$store.state.vente[index] = response.data
           console.log(response)
-          return modalController.dismiss(send, 'confirm');
+          return modalController.dismiss(index, 'confirm');
         })
         .catch(error => {
           console.error('Erreur lors de la mise à jour du produit:', error);
@@ -110,27 +141,29 @@ export default  defineComponent({
       },
       watch:{
         "$store.state.vente"(new_val){
-            this.prod=new_val
+            this.$store.state.produit=new_val
 }
-      }
+      },
+      computed:{
+        chercherP(){
+          if(this.chercher.trim().length ==0){
+            return this.$store.state.produit,
+            console.log(this.prod)
+          }
+          if(this.chercher.toLowerCase() != this.chercher.toUpperCase()){
+            return this.$store.state.produit.filter((i)=>i.nom.toLowerCase().includes(this.chercher.trim.toLowerCase())),
+            console.log(this.prod)
+          }
+          else{
+            return this.$store.state.produit.filter((i)=> i.prix_unitaire.toString().includes(this.chercher.trim()))
+          }
+        },
+      },
     },
     mounted(){
-        axios.get("http://127.0.0.1:8000/produit/",).then((response) => {
-            this.produits = response.data.results
-            let nextPage = response.data.next;
-//while(response.data.next != null){
-console.log(response.data.results)
-//response.data.next++
-//}
-for (let i=2;i <=10;i++) {
-  console.log(nextPage)
-  axios.get(`http://127.0.0.1:8000/produit/?page=${i}`).then((response) => {
-    this.produits.push(...response.data.results);
-    nextPage = response.data.next;
-  });
-}})
     }
-})
+    }
+)
 </script>
 
 <style scoped>
