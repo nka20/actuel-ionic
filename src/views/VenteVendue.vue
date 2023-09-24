@@ -6,10 +6,11 @@
             Vente
           </ion-title>
           <ion-button slot="end" color="danger" @click="logout">logout</ion-button>
+          <ion-searchbar placeholder="Do you want change a name of product" @keyup.enter="handlerInput($event)"  v-model="chercher"></ion-searchbar>
         </ion-toolbar>
       </ion-header>
       
-     
+
         <div class="container">
           <h1>Enregistrement de vente</h1>
           <ion-item>
@@ -25,7 +26,15 @@
             <ion-input aria-label="number" v-model="quantite" type="number">quantite</ion-input>
           </ion-item>
           <ion-button expand="full" @click="save">Enregistrer</ion-button>
+          <!-- Liste des produits -->
+         
         </div>
+        <div class="lists-container">
+          <ion-label v-for="az in searchedData" :key="az">
+        <h1>{{az.nom}}-{{az.prix_unique}}</h1>
+        </ion-label>
+        
+      </div>
          <ion-content>
         <div class="list-container">
           <div class="list-title">Liste des ventes</div>
@@ -67,7 +76,7 @@ import {
     IonLabel,
     IonButton,
     modalController,
-
+    IonSearchbar
   
   } from '@ionic/vue';
   export default {
@@ -84,6 +93,7 @@ import {
       IonItem,
       IonLabel,
       IonButton,
+      IonSearchbar
   
     },
     data(){
@@ -92,10 +102,29 @@ import {
       next_link: null,
       produit:"",
    produits:null,
+   searchedData:"",
    quantite:""
     };
   },
     methods: {
+      handlerInput(e){
+      let data=e.target.value.toLowerCase()
+      console.log(data)
+      axios.get(`http://127.0.0.1:8000/vente/?search=${data}`,{
+          headers: {
+            Authorization: 'Bearer ' + this.$store.state.tokens.access,
+          },
+        })
+        .then(response => {
+         //console.log(response.data)
+         this.searchedData=response.data.results
+         console.log(this.searchedData.nom)
+        })
+        .catch(error => {
+          console.error('Erreur lors de la mise à jour du produit:', error);
+        });
+
+},
       handleSelectedProductChange() {
       if (this.produit) {
         console.log(this.produit.nom)

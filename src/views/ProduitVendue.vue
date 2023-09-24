@@ -69,6 +69,7 @@ import {
 IonInput,
   IonLabel,
   IonButton,
+  IonSearchbar,
   modalController,
 
 } from '@ionic/vue';
@@ -86,7 +87,7 @@ export default defineComponent({
     IonItem,
     IonLabel,
     IonButton,
-
+IonSearchbar
   },
   data(){
     return{
@@ -95,7 +96,8 @@ export default defineComponent({
       id:"",
       prod:this.$store.state.produit,
       next_link: null,
-      searchedData:[]
+      searchedData:[],
+      chercher:""
     };
   },
   methods: {
